@@ -1,0 +1,185 @@
+package main;
+
+import exceptions.*;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.IntegerStringConverter;
+import person.Person;
+import person.Registry;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+public class TableViewController implements Initializable {
+
+    @FXML
+    private TableView<Person> tableViewTable;
+
+    @FXML
+    private TableColumn<Person, String> nameColumn;
+
+    @FXML
+    private TableColumn<Person, Integer> ageColumn;
+
+    @FXML
+    private TableColumn<Person, String> dobColumn;
+
+    @FXML
+    private TableColumn<Person, String> emailColumn;
+
+    @FXML
+    private TableColumn<Person, String> numberColumn;
+
+    @FXML
+    private ChoiceBox<String> filterByChoice;
+
+    @FXML
+    private TextField filterField;
+
+    @FXML
+    void nameEdit(TableColumn.CellEditEvent<Person, String> edit){
+        Person person = tableViewTable.getSelectionModel().getSelectedItem();
+        try {
+            person.setName(edit.getNewValue());
+        }catch (InvalidNameException e){
+            if (!edit.getNewValue().isBlank()) {
+                Alerts.invalidInput(e.getMessage());
+            }
+            person.setName(edit.getOldValue());
+        }
+        tableViewTable.refresh();
+    }
+
+    @FXML
+    void ageEdit(TableColumn.CellEditEvent<Person, Integer> edit){
+        Person person = tableViewTable.getSelectionModel().getSelectedItem();
+        try {
+            person.setAge(edit.getNewValue());
+        }catch (InvalidAgeException e){
+            if (edit.getNewValue() != null) {
+                Alerts.invalidInput(e.getMessage());
+            }
+            person.setAge(edit.getOldValue());
+        }
+        tableViewTable.refresh();
+    }
+
+    @FXML
+    void dobEdit(TableColumn.CellEditEvent<Person, String> edit){
+        Person person = tableViewTable.getSelectionModel().getSelectedItem();
+        try {
+            person.setBirthdate(edit.getNewValue());
+        }catch (InvalidDateException e){
+            if (!edit.getNewValue().isBlank()) {
+                Alerts.invalidInput(e.getMessage());
+            }
+            person.setBirthdate(edit.getOldValue());
+        }
+        tableViewTable.refresh();
+    }
+
+    @FXML
+    void emailEdit(TableColumn.CellEditEvent<Person, String> edit){
+        Person person = tableViewTable.getSelectionModel().getSelectedItem();
+        try {
+            person.setNumber(edit.getNewValue());
+        }catch (InvalidPhoneException e){
+            if (!edit.getNewValue().isBlank()) {
+                Alerts.invalidInput(e.getMessage());
+            }
+            person.setNumber(edit.getOldValue());
+        }
+        tableViewTable.refresh();
+    }
+
+    @FXML
+    void numberEdit(TableColumn.CellEditEvent<Person, String> edit){
+        Person person = tableViewTable.getSelectionModel().getSelectedItem();
+        try {
+            person.setNumber(edit.getNewValue());
+        }catch (InvalidDateException e){
+                Alerts.invalidInput(e.getMessage());
+                person.setBirthdate(edit.getOldValue());
+        }
+        tableViewTable.refresh();
+    }
+
+    @FXML
+    void closeTableView(ActionEvent event) {
+        PrimaryController.tableViewStage.close();
+    }
+
+    @FXML
+    void removeSelectedPerson(ActionEvent event) {
+        Person person = tableViewTable.getSelectionModel().getSelectedItem();
+        Registry.getRegistry().remove(person);
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        filterByChoice.getItems().addAll("Navn",
+                "Alder",
+                "Fødselsdato",
+                "Epost",
+                "Telefonnummer");
+        filterByChoice.setValue("Navn");
+
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
+        ageColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+        dobColumn.setCellValueFactory(new PropertyValueFactory<>("birthdate"));
+        dobColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        emailColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        numberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
+        numberColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        filterField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            String searchText = newValue.toLowerCase().trim();
+
+            tableViewTable.setItems(
+                    Registry.getRegistry().stream().filter(person -> {
+                        if(searchText.isBlank() || searchText.isEmpty()){
+                            return true;
+                        }
+                        else {
+                            switch (filterByChoice.getSelectionModel().getSelectedItem()){
+                                case "Navn":
+                                    return person.getName().toLowerCase().contains(searchText);
+                                case "Fødselsdato":
+                                    return person.getBirthdate().toLowerCase().contains(searchText);
+                                case "Alder":
+                                    try{
+                                        return ((person.getAge() == Integer.parseInt(searchText)));
+                                    } catch (NumberFormatException e){
+                                        return false;
+                                    }
+                                case "Epost":
+                                    return person.getEmail().toLowerCase().contains(searchText);
+                                case "Telefonnummer":
+                                    return person.getNumber().toLowerCase().contains(searchText);
+                            }
+                        }
+                        return false;
+                    }
+            ).collect(Collectors.toCollection(FXCollections::observableArrayList)));
+        });
+
+        tableViewTable.setItems(Registry.getRegistry());
+        tableViewTable.setEditable(true);
+    }
+}

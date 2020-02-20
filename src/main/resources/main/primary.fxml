@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="400.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.PrimaryController">
+   <center>
+      <VBox alignment="CENTER" maxWidth="185.0" prefWidth="185.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxWidth="185.0" prefWidth="185.0">
+               <children>
+                  <Label prefWidth="41.0" text="Navn: " />
+                  <Label fx:id="nameError" />
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </HBox>
+            <TextField fx:id="nameInput" promptText="Skriv inn navn" />
+            <HBox maxWidth="185.0">
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+               <children>
+                  <Label text="Fødselsdato: " />
+                  <Label fx:id="dobError" />
+               </children>
+            </HBox>
+            <HBox prefWidth="200.0" spacing="5.0">
+               <children>
+                  <TextField fx:id="dateInput" maxWidth="30.0" minWidth="30.0" promptText="dd" />
+                  <ChoiceBox fx:id="choiceMonth" prefWidth="100.0" />
+                  <TextField fx:id="yearInput" maxWidth="45.0" promptText="yyyy" />
+               </children>
+            </HBox>
+            <HBox prefWidth="200.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+               <children>
+                  <Label text="Epost: " />
+                  <Label fx:id="emailError" />
+               </children>
+            </HBox>
+            <TextField fx:id="emailInput" promptText="Skriv inn epost: " />
+            <HBox prefWidth="200.0">
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+               <children>
+                  <Label text="Telefon: " />
+                  <Label fx:id="numberError" />
+               </children>
+            </HBox>
+            <TextField fx:id="numberInput" promptText="Skriv inn telefonnummer">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </TextField>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#submitPerson" text="Submit">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
+            <Label fx:id="submissionResult" prefHeight="125.0" prefWidth="196.0" />
+         </children>
+      </VBox>
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newRegistry" text="New" />
+                  <MenuItem mnemonicParsing="false" onAction="#openRegistry" text="Open" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveRegistry" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveRegistryAs" text="Save as" />
+               </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="View">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#showTableView" text="TableView" fx:id="viewTableView" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>
