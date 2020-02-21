@@ -16,9 +16,19 @@ public class Registry implements Serializable {
     public static ObservableList<Person> getRegistry() {
         return registry;
     }
-    public static ArrayList<Person> getSerializableList(){
-        return new ArrayList<>(registry);
+
+    public static void add(Person person){
+        registry.add(person);
     }
+
+    public static void remove(Person person){
+        registry.remove(person);
+    }
+
+    public static void replaceWith(ObservableList<Person> list){
+        registry.setAll(list);
+    }
+
     public static boolean personExists(Person person){
         for(Person member : registry){
             if(member.getEmail().equals(person.getEmail()) || member.getNumber().equals(person.getNumber())){

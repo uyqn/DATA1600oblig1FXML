@@ -9,7 +9,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import person.*;
@@ -19,10 +18,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class PrimaryController implements Initializable {
-
-    public static FileManager fileManager = new FileManager();
-    public static Stage tableViewStage = new Stage();
-    public static MenuItem viewTableView;
 
     @FXML
     private Label nameError, dobError, emailError, numberError, submissionResult;
@@ -35,16 +30,17 @@ public class PrimaryController implements Initializable {
 
     @FXML
     void newRegistry(ActionEvent event) {
-        if(fileManager.isSaved()){
-            if(tableViewStage.isShowing()){
-                tableViewStage.close();
+        if(App.fileManager.isSaved()){
+            if(App.tableViewStage.isShowing()){
+                App.tableViewStage.close();
             }
             try {
-                Save.save(fileManager, Registry.getRegistry());
+                FileSaver fileSaver = new FileSaver() {};
+                fileSaver.save(App.fileManager, Registry.getRegistry());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            fileManager.setSaved(false);
+            App.fileManager.setSaved(false);
             Registry.getRegistry().clear();
 
             resetInputs();
@@ -52,8 +48,8 @@ public class PrimaryController implements Initializable {
             submissionResult.setText("");
         }
         else if(Registry.getRegistry().isEmpty()){
-            if(tableViewStage.isShowing()){
-                tableViewStage.close();
+            if(App.tableViewStage.isShowing()){
+                App.tableViewStage.close();
             }
             resetInputs();
             resetErrors();
@@ -76,11 +72,12 @@ public class PrimaryController implements Initializable {
         }
         else{
             try {
-                Registry.getRegistry().setAll(Open.open(fileManager));
+                FileOpener fileOpener = new FileOpener() {};
+                fileOpener.open(App.fileManager);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InvalidPersonException e){
-                fileManager.setSaved(false);
+                App.fileManager.setSaved(false);
             }
         }
     }
@@ -88,7 +85,8 @@ public class PrimaryController implements Initializable {
     @FXML
     void saveRegistry(ActionEvent event) {
         try {
-            Save.save(fileManager, Registry.getRegistry());
+            FileSaver fileSaver = new FileSaver() {};
+            fileSaver.save(App.fileManager, Registry.getRegistry());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,11 +94,8 @@ public class PrimaryController implements Initializable {
 
     @FXML
     void saveRegistryAs(ActionEvent event) {
-        try {
-            Save.saveAs(fileManager, Registry.getRegistry());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FileSaver fileSaver = new FileSaver() {};
+        fileSaver.saveAs(App.fileManager, Registry.getRegistry());
     }
 
     @FXML
@@ -164,13 +159,14 @@ public class PrimaryController implements Initializable {
     @FXML
     void showTableView(ActionEvent event) throws IOException {
         //Disse kodene lager ett nytt vindu med Tableview
-        tableViewStage.setTitle("TableView");
+        App.tableViewStage = new Stage();
+        App.tableViewStage.setTitle("TableView");
         FXMLLoader tableViewFXML = new FXMLLoader(App.class.getResource("tableViewStage.fxml"));
 
         Scene tableViewScene = new Scene(tableViewFXML.load());
 
-        tableViewStage.setScene(tableViewScene);
-        tableViewStage.show();
+        App.tableViewStage.setScene(tableViewScene);
+        App.tableViewStage.show();
     }
 
     @Override

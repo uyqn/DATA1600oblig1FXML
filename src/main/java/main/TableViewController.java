@@ -52,7 +52,7 @@ public class TableViewController implements Initializable {
             person.setName(edit.getNewValue());
         }catch (InvalidNameException e){
             if (!edit.getNewValue().isBlank()) {
-                Alerts.invalidInput(e.getMessage());
+                Alerts.infoDialog(e.getMessage());
             }
             person.setName(edit.getOldValue());
         }
@@ -66,7 +66,7 @@ public class TableViewController implements Initializable {
             person.setAge(edit.getNewValue());
         }catch (InvalidAgeException e){
             if (edit.getNewValue() != null) {
-                Alerts.invalidInput(e.getMessage());
+                Alerts.infoDialog(e.getMessage());
             }
             person.setAge(edit.getOldValue());
         }
@@ -80,7 +80,7 @@ public class TableViewController implements Initializable {
             person.setBirthdate(edit.getNewValue());
         }catch (InvalidDateException e){
             if (!edit.getNewValue().isBlank()) {
-                Alerts.invalidInput(e.getMessage());
+                Alerts.infoDialog(e.getMessage());
             }
             person.setBirthdate(edit.getOldValue());
         }
@@ -94,7 +94,7 @@ public class TableViewController implements Initializable {
             person.setNumber(edit.getNewValue());
         }catch (InvalidPhoneException e){
             if (!edit.getNewValue().isBlank()) {
-                Alerts.invalidInput(e.getMessage());
+                Alerts.infoDialog(e.getMessage());
             }
             person.setNumber(edit.getOldValue());
         }
@@ -107,7 +107,7 @@ public class TableViewController implements Initializable {
         try {
             person.setNumber(edit.getNewValue());
         }catch (InvalidDateException e){
-                Alerts.invalidInput(e.getMessage());
+                Alerts.infoDialog(e.getMessage());
                 person.setBirthdate(edit.getOldValue());
         }
         tableViewTable.refresh();
@@ -115,7 +115,7 @@ public class TableViewController implements Initializable {
 
     @FXML
     void closeTableView(ActionEvent event) {
-        PrimaryController.tableViewStage.close();
+        App.tableViewStage.close();
     }
 
     @FXML

@@ -3,8 +3,7 @@ package main;
 import exceptions.InvalidPersonException;
 import fileManager.FileOpener;
 import fileManager.FileSaver;
-import fileManager.Open;
-import fileManager.Save;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,7 +19,6 @@ import static javafx.geometry.Pos.CENTER;
 
 public class Alerts {
     public static boolean newRegistryCancelled = true;
-
     public static void addOrReplace(){
         Stage addOrReplaceAlert = new Stage();
         addOrReplaceAlert.initModality(Modality.APPLICATION_MODAL);
@@ -35,18 +33,20 @@ public class Alerts {
 
         replace.setOnAction(actionEvent -> {
             try {
-                Registry.getRegistry().setAll(Open.open(PrimaryController.fileManager));
+                FileOpener fileOpener = new FileOpener() {};
+                fileOpener.open(App.fileManager);
             } catch (IOException | InvalidPersonException e) {
-                PrimaryController.fileManager.setSaved(false);
+                App.fileManager.setSaved(false);
             }
             addOrReplaceAlert.close();
         });
 
         add.setOnAction(actionEvent -> {
             try {
-                Registry.getRegistry().addAll(Open.open(PrimaryController.fileManager));
+                FileOpener fileOpener = new FileOpener() {};
+                fileOpener.open(App.fileManager);
             } catch (IOException | InvalidPersonException e) {
-                PrimaryController.fileManager.setSaved(false);
+                App.fileManager.setSaved(false);
             }
             addOrReplaceAlert.close();
         });
@@ -70,7 +70,6 @@ public class Alerts {
         addOrReplaceAlert.setScene(scene);
         addOrReplaceAlert.show();
     }
-
     public static void newRegistryAlert(){
         Stage newRegistryAlert = new Stage();
 
@@ -83,23 +82,20 @@ public class Alerts {
         Button yes = new Button("Lagre");
         yes.setMinWidth(30);
         yes.setOnAction(actionEvent -> {
-            try {
-                Save.saveAs(PrimaryController.fileManager, Registry.getRegistry());
-            } catch (IOException e) {
-                e.printStackTrace();
+            FileSaver fileSaver = new FileSaver(){};
+            fileSaver.saveAs(App.fileManager, Registry.getRegistry());
+            if(App.tableViewStage.isShowing()){
+                App.tableViewStage.close();
             }
-            if(PrimaryController.tableViewStage.isShowing()){
-                PrimaryController.tableViewStage.close();
-            }
-            PrimaryController.fileManager.setSaved(false);
+            App.fileManager.setSaved(false);
             Registry.getRegistry().clear();
         });
 
         Button no = new Button("Ikke Lagre");
         no.setMinWidth(30);
         no.setOnAction(actionEvent -> {
-            if(PrimaryController.tableViewStage.isShowing()) {
-                PrimaryController.tableViewStage.close();
+            if(App.tableViewStage.isShowing()) {
+                App.tableViewStage.close();
             }
             Registry.getRegistry().clear();
             newRegistryAlert.close();
@@ -122,8 +118,7 @@ public class Alerts {
         newRegistryAlert.setScene(scene);
         newRegistryAlert.show();
     }
-
-    public static void invalidInput(String errorMessage){
+    public static void infoDialog(String errorMessage){
         Stage invalidInputAlert = new Stage();
         invalidInputAlert.setTitle("Ugyldig input!");
         invalidInputAlert.initModality(Modality.APPLICATION_MODAL);
@@ -140,5 +135,51 @@ public class Alerts {
         Scene scene = new Scene(layout, 300, 200);
         invalidInputAlert.setScene(scene);
         invalidInputAlert.show();
+    }
+
+    public static void saveBeforeExit(){
+        Stage saveBeforeExit = new Stage();
+
+        saveBeforeExit.initModality(Modality.APPLICATION_MODAL);
+
+        Label message = new Label("Vil du lagre endringer før du lukker programmet?");
+
+        Button yes = new Button("Lagre");
+        yes.setMinWidth(30);
+        yes.setOnAction(actionEvent -> {
+            FileSaver fileSaver = new FileSaver(){};
+            try {
+                fileSaver.save(App.fileManager, Registry.getRegistry());
+                if(App.fileManager.getPath() != null){
+                    Platform.exit();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        Button no = new Button("Ikke Lagre");
+        no.setMinWidth(30);
+        no.setOnAction(actionEvent -> {
+            Registry.getRegistry().clear();
+            Platform.exit();
+        });
+
+        Button cancel = new Button ("Avbryt");
+        cancel.setMinWidth(30);
+        cancel.setOnAction(actionEvent -> saveBeforeExit.close());
+
+        HBox options = new HBox(10);
+        options.setSpacing(10);
+        options.setAlignment(CENTER);
+        options.getChildren().addAll(yes, no, cancel);
+
+        VBox layout = new VBox(10);
+        layout.setAlignment(CENTER);
+        layout.getChildren().addAll(message, options);
+
+        Scene scene = new Scene(layout, 300,150);
+        saveBeforeExit.setScene(scene);
+        saveBeforeExit.show();
     }
 }
