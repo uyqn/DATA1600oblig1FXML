@@ -92,12 +92,12 @@ public class TableViewController implements Initializable {
     void emailEdit(TableColumn.CellEditEvent<Person, String> edit){
         Person person = tableViewTable.getSelectionModel().getSelectedItem();
         try {
-            person.setNumber(edit.getNewValue());
-        }catch (InvalidPhoneException e){
+            person.setEmail(edit.getNewValue());
+        }catch (InvalidEmailException e){
             if (!edit.getNewValue().isBlank()) {
                 Alerts.infoDialog(e.getMessage());
             }
-            person.setNumber(edit.getOldValue());
+            person.setEmail(edit.getOldValue());
         }
         tableViewTable.refresh();
     }
@@ -164,11 +164,7 @@ public class TableViewController implements Initializable {
                                 case "Fødselsdato":
                                     return person.getBirthdate().toLowerCase().contains(searchText);
                                 case "Alder":
-                                    try{
-                                        return ((person.getAge() == Integer.parseInt(searchText)));
-                                    } catch (NumberFormatException e){
-                                        return false;
-                                    }
+                                    return person.getAge().equals(searchText);
                                 case "Epost":
                                     return person.getEmail().toLowerCase().contains(searchText);
                                 case "Telefonnummer":
