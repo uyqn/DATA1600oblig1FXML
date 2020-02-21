@@ -28,7 +28,7 @@ public class TableViewController implements Initializable {
     private TableColumn<Person, String> nameColumn;
 
     @FXML
-    private TableColumn<Person, Integer> ageColumn;
+    private TableColumn<Person, String> ageColumn;
 
     @FXML
     private TableColumn<Person, String> dobColumn;
@@ -60,15 +60,16 @@ public class TableViewController implements Initializable {
     }
 
     @FXML
-    void ageEdit(TableColumn.CellEditEvent<Person, Integer> edit){
+    void ageEdit(TableColumn.CellEditEvent<Person, String> edit){
         Person person = tableViewTable.getSelectionModel().getSelectedItem();
         try {
-            person.setAge(edit.getNewValue());
+            int age = Integer.parseInt(edit.getNewValue());
+            person.setAge(age);
         }catch (InvalidAgeException e){
             if (edit.getNewValue() != null) {
                 Alerts.infoDialog(e.getMessage());
             }
-            person.setAge(edit.getOldValue());
+            person.setAge(Integer.parseInt(edit.getOldValue()));
         }
         tableViewTable.refresh();
     }
@@ -137,7 +138,7 @@ public class TableViewController implements Initializable {
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
         ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
-        ageColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        ageColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
         dobColumn.setCellValueFactory(new PropertyValueFactory<>("birthdate"));
         dobColumn.setCellFactory(TextFieldTableCell.forTableColumn());

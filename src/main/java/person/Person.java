@@ -48,7 +48,7 @@ public class Person implements Serializable {
     public void setAge(int age){
         this.birthdate.getValue().setAge(age);
     }
-    public int getAge(){
+    public String getAge(){
         return birthdate.getValue().getAge();
     }
 

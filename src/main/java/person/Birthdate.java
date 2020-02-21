@@ -1,5 +1,6 @@
 package person;
 
+import exceptions.InvalidAgeException;
 import exceptions.InvalidDateException;
 
 import java.io.Serializable;
@@ -103,7 +104,11 @@ public class Birthdate implements Serializable {
         this.birthdate = this.date + ". " + monthName[this.month-1] + " " + this.year;
     }
 
-    public void setAge(int age){
+    public void setAge(int age) throws InvalidAgeException{
+        if(age < 0 || age > 120){
+            throw new InvalidAgeException("Alder må være mellom 0 og 120");
+        }
+
         LocalDate currentDate = LocalDate.now();
         LocalDate birthday = LocalDate.of(currentDate.getYear(), getMonth(), getDate());
 
@@ -118,13 +123,13 @@ public class Birthdate implements Serializable {
         setYear(newYearOfBirth);
     }
 
-    public int getAge(){
+    public String getAge(){
         LocalDate currentDate = LocalDate.now();
         LocalDate birtdate = LocalDate.of(
                 this.year, this.month, this.date
         );
 
-        return Period.between(birtdate,currentDate).getYears();
+        return Period.between(birtdate,currentDate).getYears() + "";
     }
 
     /*
